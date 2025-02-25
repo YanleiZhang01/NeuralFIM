@@ -50,7 +50,7 @@ def computeJSD(X):
      
     jsd.fill_diagonal_(0) #setting diagonal to 0 to avoid nan's
             
-    return jsd.to(X.device)
+    return jsd.to('cuda')
 
 
 def loss_fn(
@@ -74,7 +74,7 @@ def loss_fn(
         if kernel_type.lower() == "phate":
             _, dim = encoded_sample.shape
             sample_np = sample.detach().cpu().numpy()
-            phate_op = phate.PHATE(n_components=dim, verbose=False, knn=knn).fit(
+            phate_op = phate.PHATE(n_components=dim, verbose=False, n_pca=19, knn=knn).fit(
                 sample_np
             )
             diff_pot = torch.tensor(phate_op.diff_potential).float().to(sample.device)

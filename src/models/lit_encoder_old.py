@@ -37,7 +37,8 @@ class LitAutoencoder(pl.LightningModule):
         logp=False,
         **kwargs,
     ) -> None:
-        print("Instatiating model") 
+        
+        
         self.logp = logp
         #Specify encoder
         super().__init__()
@@ -49,7 +50,7 @@ class LitAutoencoder(pl.LightningModule):
             if i1 != encoder_layer[-1]:
                 encoder.append(getattr(nn, activation)())
         
-        #encoder.append(nn.Softmax(dim=1))
+        encoder.append(nn.Softmax(dim=1))
         self.encoder = nn.Sequential(*encoder)
         
         print(encoder)
@@ -115,11 +116,10 @@ class LitAutoencoder(pl.LightningModule):
         sample, target = batch
 
         noise = self.scale * torch.randn(sample.size()).to(sample.device)
-        encoded_sample = self.encode(sample + noise)
-        #if self.logp:
-        #    encoded_sample = self.encode(sample + noise)
-        #else:
-        #    encoded_sample = self.encode(sample + noise)
+        if self.logp:
+            encoded_sample = self.encode(sample + noise)
+        else:
+            encoded_sample = self.encode(sample + noise)
         decoded_sample = self.decode(encoded_sample)
 
         if self.loss_rec:
@@ -146,17 +146,11 @@ class LitAutoencoder(pl.LightningModule):
         
         loss = loss_e + loss_d + loss_r # Loss distances and loss embedding
         
-
-        #tensorboard_log = {"train_loss": loss}
-        #if self.logger is not None:
-        #    self.log("training_losses", {"loss_d": loss_d, "loss_e": loss_e, "loss": loss})
-        #return {"loss": loss, "log": tensorboard_log}
+        
         tensorboard_log = {"train_loss": loss}
-        if self.logger is not None:
-            self.log("loss_d", loss_d)
-            self.log("loss_e", loss_e)
-            self.log("loss", loss)
-        return {"loss": loss, "log": tensorboard_log} 
+        self.log("training_losses", {"loss_d": loss_d, "loss_e": loss_e, "loss": loss})
+        return {"loss": loss, "log": tensorboard_log}
+
 
 
 class LitDistEncoder(pl.LightningModule):

@@ -155,7 +155,7 @@ def make_eb(n_obs = 150, emb_dim = 2, knn = 15, n_dim = 10, indx = None, downloa
             sel_idx = rng.choice(np.arange(len(eb_phate)),n_obs,replace = False)
  
         #return torch.tensor(eb_data[sel_idx], requires_grad=True).float(), eb_phate[sel_idx], eb_y[sel_idx]
-        return torch.tensor(eb_data[sel_idx], requires_grad=True).float(), eb_y[sel_idx]
+        return torch.tensor(eb_data[sel_idx], requires_grad=True).float(), eb_phate[sel_idx]
         #return eb_phate[sel_idx], eb_y[sel_idx]
     
     else:
